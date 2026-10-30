@@ -1,106 +1,131 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PC Virtual</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meu PC Virtual</title>
 <style>
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#0879b9;color:white;height:100vh;overflow:hidden}
-.desktop{height:100dvh;padding:20px;background:linear-gradient(135deg,#063c80,#079bc9 60%,#102c68)}
-.icons{display:grid;grid-template-columns:75px 75px;gap:25px 15px}
-.app{width:75px;text-align:center;cursor:pointer;padding:8px 2px;border:1px solid transparent;border-radius:5px;font-size:12px}
-.app:hover{background:#ffffff30;border-color:#ffffff40}
-.emoji{font-size:35px;display:block;margin-bottom:7px}
-.taskbar{position:absolute;bottom:0;left:0;width:100%;height:55px;background:#101a2bd9;display:flex;align-items:center;justify-content:center;gap:16px;backdrop-filter:blur(12px)}
-.taskbar button{font-size:23px;background:none;border:0;color:white;cursor:pointer}
-.clock{position:absolute;right:12px;font-size:12px;text-align:right}
-.window{display:none;position:absolute;top:12%;left:5%;width:90%;height:70%;max-width:700px;background:#f4f6fa;color:#222;border-radius:9px;overflow:hidden;box-shadow:0 10px 50px #0007}
-.titlebar{height:42px;background:#172c4b;color:white;display:flex;align-items:center;justify-content:space-between;padding:0 12px}
-.titlebar button{background:#d33;color:white;border:0;padding:7px 12px;border-radius:4px}
-.content{padding:15px;height:calc(100% - 42px);overflow:auto}
-.content button{padding:10px;border:0;border-radius:5px;background:#1769aa;color:white;margin:4px;cursor:pointer}
-input{padding:10px;max-width:100%;width:100%;margin:8px 0}
-#notes{width:100%;height:65%;padding:10px}
+:root{--accent:#20a9e0;--glass:rgba(13,30,48,.88);--text:#fff}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:Arial,Helvetica,sans-serif;color:var(--text)}
+body{background:radial-gradient(ellipse at 75% 65%,#14c4d4 0,#0788bb 38%,#07508d 76%,#092d5c 100%)}
+#desktop{height:calc(100% - 54px);padding:18px;display:grid;grid-template-columns:82px 82px;grid-auto-rows:94px;align-content:start;gap:8px 12px}
+.desktop-icon{border:1px solid transparent;border-radius:8px;background:transparent;color:white;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;font-size:12px;text-shadow:0 1px 3px #123;cursor:pointer;min-width:0}
+.desktop-icon:hover,.desktop-icon:focus{background:#ffffff25;border-color:#ffffff45;outline:none}
+.desktop-icon .emoji{font-size:31px;line-height:36px}
+#taskbar{position:absolute;bottom:0;left:0;right:0;height:54px;background:rgba(8,24,42,.88);backdrop-filter:blur(16px);display:flex;align-items:center;justify-content:center;gap:8px;border-top:1px solid #ffffff22}
+.taskbtn{border:0;background:transparent;color:white;font-size:22px;width:43px;height:42px;border-radius:7px;cursor:pointer}
+.taskbtn:hover,.taskbtn.active{background:#ffffff24}
+#clock{position:absolute;right:13px;text-align:right;font-size:12px;line-height:16px}
+#startMenu{display:none;position:absolute;bottom:62px;left:50%;transform:translateX(-50%);width:min(360px,94vw);background:rgba(15,32,51,.96);border:1px solid #ffffff35;border-radius:14px;padding:16px;box-shadow:0 12px 35px #0006;backdrop-filter:blur(20px)}
+#startMenu.show{display:block}
+#startMenu h3{margin:0 0 12px;font-size:16px}
+.start-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.start-grid button{border:0;background:#ffffff12;color:white;border-radius:9px;padding:12px 4px;cursor:pointer}
+.start-grid button span{display:block;font-size:25px;margin-bottom:6px}
+#windowLayer{position:absolute;inset:12px 8px 64px;pointer-events:none}
+.win{pointer-events:auto;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(560px,96vw);height:min(420px,78vh);background:#f5f7fa;color:#172331;border-radius:11px;overflow:hidden;box-shadow:0 15px 45px #0007;display:flex;flex-direction:column;border:1px solid #ffffffaa}
+.win.maximized{width:100%;height:100%;left:0;top:0;transform:none}
+.titlebar{height:42px;flex-shrink:0;background:#e8eef5;display:flex;align-items:center;padding:0 9px 0 13px;gap:8px;cursor:move;user-select:none;border-bottom:1px solid #d5dce5}
+.titlebar strong{font-size:13px;flex:1}
+.win-controls{display:flex;gap:5px}
+.win-controls button{border:0;border-radius:5px;width:28px;height:27px;background:#dce5ee;color:#15283b;cursor:pointer}
+.win-controls button.close{background:#e45b63;color:white}
+.win-content{padding:15px;overflow:auto;flex:1}
+.win-content button,.win-content input,.win-content textarea,.win-content select{font:inherit}
+.win-content button{border:0;border-radius:7px;padding:9px 12px;background:#168fcb;color:white;cursor:pointer}
+.win-content input,.win-content textarea{width:100%;padding:10px;border:1px solid #bdc9d6;border-radius:7px;margin:5px 0 10px;color:#172331;background:white}
+.win-content textarea{min-height:190px;resize:vertical}
+.browserbar{display:flex;gap:6px}.browserbar input{margin:0;min-width:0;flex:1}
+.browserview{margin-top:12px;border:1px solid #d5dce5;border-radius:8px;min-height:220px;padding:14px;overflow-wrap:anywhere}
+.tile-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:10px}
+.tile{background:white;border:1px solid #d8e0e8;border-radius:9px;padding:14px;text-align:center;cursor:pointer;color:#1a2c3c}
+.tile span{font-size:28px;display:block;margin-bottom:8px}
+.calc{max-width:290px;margin:auto}.calc-display{font-size:26px;text-align:right;background:#e7edf3;padding:14px;border-radius:8px;margin-bottom:9px;overflow:hidden}
+.calc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.calc-grid button{padding:14px 4px;background:#dce6ef;color:#183148}.calc-grid button.op{background:#168fcb;color:white}
+#toast{position:absolute;left:50%;top:14px;transform:translateX(-50%);background:#10283feF;color:white;border-radius:9px;padding:10px 15px;font-size:13px;display:none;box-shadow:0 5px 20px #0003}
+@media(max-width:480px){#desktop{padding:10px;grid-template-columns:70px 70px;grid-auto-rows:83px}.desktop-icon .emoji{font-size:28px}.win{height:min(460px,82vh)}}
 </style>
 </head>
 <body>
-<div class="desktop">
-  <div class="icons">
-    <div class="app" onclick="openApp('Meu PC')"><span class="emoji">🖥️</span>Meu PC</div>
-    <div class="app" onclick="openApp('Navegador')"><span class="emoji">🌐</span>Navegador</div>
-    <div class="app" onclick="openApp('Bloco de Notas')"><span class="emoji">📝</span>Notas</div>
-    <div class="app" onclick="openApp('Calculadora')"><span class="emoji">🧮</span>Calculadora</div>
-    <div class="app" onclick="openApp('Jogos')"><span class="emoji">🎮</span>Jogos</div>
-    <div class="app" onclick="openApp('Configurações')"><span class="emoji">⚙️</span>Configurações</div>
+<div id="desktop">
+  <button class="desktop-icon" data-app="pc"><span class="emoji">🖥️</span><span>Meu PC</span></button>
+  <button class="desktop-icon" data-app="browser"><span class="emoji">🌐</span><span>Navegador</span></button>
+  <button class="desktop-icon" data-app="notes"><span class="emoji">📝</span><span>Notas</span></button>
+  <button class="desktop-icon" data-app="calc"><span class="emoji">🧮</span><span>Calculadora</span></button>
+  <button class="desktop-icon" data-app="games"><span class="emoji">🎮</span><span>Jogos</span></button>
+  <button class="desktop-icon" data-app="settings"><span class="emoji">⚙️</span><span>Configurações</span></button>
+</div>
+<div id="windowLayer"></div>
+<div id="startMenu">
+  <h3>☀️ Meu PC Virtual</h3>
+  <div class="start-grid">
+    <button data-open="pc"><span>🖥️</span>Meu PC</button><button data-open="browser"><span>🌐</span>Navegador</button><button data-open="notes"><span>📝</span>Notas</button>
+    <button data-open="calc"><span>🧮</span>Calculadora</button><button data-open="games"><span>🎮</span>Jogos</button><button data-open="settings"><span>⚙️</span>Ajustes</button>
   </div>
 </div>
-
-<div class="taskbar">
-  <button onclick="openApp('Iniciar')">⊞</button>
-  <button onclick="openApp('Navegador')">🌐</button>
-  <button onclick="openApp('Meu PC')">🖥️</button>
-  <div class="clock" id="clock"></div>
+<div id="toast"></div>
+<div id="taskbar">
+  <button class="taskbtn" id="startBtn" title="Menu iniciar">⊞</button>
+  <button class="taskbtn" data-app="browser" title="Navegador">🌐</button>
+  <button class="taskbtn" data-app="pc" title="Meu PC">🖥️</button>
+  <div id="clock"><div id="time">--:--</div><div id="date">--/--/----</div></div>
 </div>
-
-<div class="window" id="win">
-  <div class="titlebar"><span id="title">Aplicativo</span><button onclick="closeApp()">✕</button></div>
-  <div class="content" id="content"></div>
-</div>
-
 <script>
+const layer=document.getElementById('windowLayer'), menu=document.getElementById('startMenu'), toast=document.getElementById('toast');
+let z=10, gameScore=0, gameTimer=null;
+function notify(msg){toast.textContent=msg;toast.style.display='block';clearTimeout(notify.t);notify.t=setTimeout(()=>toast.style.display='none',2200)}
+const apps={
+ pc:{title:'Meu PC',icon:'🖥️',html:`<h2>Este computador</h2><p>Bem-vindo ao seu PC virtual!</p><div class="tile-grid"><div class="tile"><span>📁</span>Documentos</div><div class="tile"><span>🖼️</span>Imagens</div><div class="tile"><span>🎵</span>Músicas</div><div class="tile"><span>⬇️</span>Downloads</div></div><p style="margin-top:18px;color:#667">Este é um ambiente de demonstração feito em HTML. Ele não acessa os arquivos reais do seu tablet.</p>`},
+ browser:{title:'Navegador',icon:'🌐',html:`<div class="browserbar"><input id="urlInput" value="https://www.google.com" aria-label="Endereço do site"><button id="goBtn">Ir</button></div><div class="browserview" id="browserView"><h2>🌐 Navegador virtual</h2><p>Digite um endereço e toque em <b>Ir</b>. Alguns sites bloqueiam a abertura dentro de outras páginas; nesse caso, o botão abrirá o site em outra aba.</p><button id="searchBtn">Pesquisar na web</button></div>`},
+ notes:{title:'Notas',icon:'📝',html:`<h2>Bloco de notas</h2><p>Suas anotações ficam salvas neste navegador.</p><textarea id="noteText" placeholder="Escreva suas ideias aqui..."></textarea><button id="saveNote">Salvar nota</button> <button id="clearNote" style="background:#667">Limpar</button>`},
+ calc:{title:'Calculadora',icon:'🧮',html:`<div class="calc"><div class="calc-display" id="calcDisplay">0</div><div class="calc-grid">${['C','⌫','%','÷','7','8','9','×','4','5','6','−','1','2','3','+','±','0','.','='].map((v,i)=>`<button class="${['÷','×','−','+','='].includes(v)?'op':''}" data-key="${v}">${v}</button>`).join('')}</div></div>`},
+ games:{title:'Jogos',icon:'🎮',html:`<h2>🎮 Mini jogos</h2><div class="tile-grid"><div class="tile" id="clickGame"><span>👆</span>Teste de clique</div><div class="tile" id="guessGame"><span>🔢</span>Adivinhe o número</div></div><div id="gameArea" style="margin-top:18px"><p>Escolha um jogo para começar.</p></div>`},
+ settings:{title:'Configurações',icon:'⚙️',html:`<h2>Configurações</h2><p>Personalize a aparência do seu desktop.</p><label for="accent">Cor de destaque</label><input id="accent" type="color" value="#20a9e0" style="height:45px"><p><label><input id="wallpaper" type="checkbox" style="width:auto"> Fundo mais escuro</label></p><button id="aboutBtn">Sobre este PC</button><p id="aboutText"></p>`}
+};
 function openApp(name){
- const win=document.getElementById('win');
- const c=document.getElementById('content');
- document.getElementById('title').textContent=name;
- win.style.display='block';
- if(name==='Meu PC'){
- c.innerHTML='<h2>🖥️ Meu PC</h2><p>PC Virtual Web</p><p>Memória real e arquivos do dispositivo não são simulados.</p><button onclick="openApp(\'Bloco de Notas\')">Abrir Notas</button>';
- }else if(name==='Navegador'){
- c.innerHTML='<h2>🌐 Navegador</h2><p>Digite um endereço para abrir em outra aba:</p><input id="url" placeholder="https://example.com"><button onclick="go()">Abrir site</button><p id="msg">Alguns sites bloqueiam a abertura dentro de outras páginas.</p>';
- }else if(name==='Bloco de Notas'){
- c.innerHTML='<h2>📝 Bloco de Notas</h2><textarea id="notes" placeholder="Escreva aqui..."></textarea><button onclick="saveNote()">Salvar neste navegador</button><p id="saved"></p>';
- }else if(name==='Calculadora'){
- c.innerHTML='<h2>🧮 Calculadora</h2><input id="calc" placeholder="Ex.: (12+8)*3"><button onclick="calculate()">Calcular</button><p id="result"></p>';
- }else if(name==='Jogos'){
- c.innerHTML='<h2>🎮 Jogos</h2><p>Pedra, papel ou tesoura!</p><button onclick="play(0)">Pedra</button><button onclick="play(1)">Papel</button><button onclick="play(2)">Tesoura</button><p id="game"></p>';
- }else if(name==='Configurações'){
- c.innerHTML='<h2>⚙️ Configurações</h2><button onclick="document.body.style.background=\'#161b22\'">Tema escuro</button><button onclick="document.body.style.background=\'#0879b9\'">Tema azul</button><p>Personalize o visual do PC virtual.</p>';
- }else{
- c.innerHTML='<h2>⊞ Menu Iniciar</h2><p>Bem-vindo ao PC Virtual!</p>'+['Meu PC','Navegador','Bloco de Notas','Calculadora','Jogos','Configurações'].map(x=>'<button onclick="openApp('+JSON.stringify(x)+')">'+x+'</button>').join('');
+ menu.classList.remove('show'); const app=apps[name]; if(!app)return;
+ let win=document.createElement('section');win.className='win';win.style.zIndex=++z;
+ win.innerHTML=`<div class="titlebar"><span>${app.icon}</span><strong>${app.title}</strong><div class="win-controls"><button data-min title="Minimizar">—</button><button data-max title="Maximizar">□</button><button class="close" data-close title="Fechar">×</button></div></div><div class="win-content">${app.html}</div>`;
+ layer.appendChild(win); win.addEventListener('pointerdown',()=>win.style.zIndex=++z);
+ win.querySelector('[data-close]').onclick=()=>{if(name==='games')clearInterval(gameTimer);win.remove()};
+ win.querySelector('[data-min]').onclick=()=>win.style.display='none';
+ win.querySelector('[data-max]').onclick=()=>win.classList.toggle('maximized');
+ const bar=win.querySelector('.titlebar');let drag=null;
+ bar.addEventListener('pointerdown',e=>{if(e.target.closest('button')||win.classList.contains('maximized'))return;drag={x:e.clientX,y:e.clientY,left:win.offsetLeft,top:win.offsetTop};bar.setPointerCapture(e.pointerId)});
+ bar.addEventListener('pointermove',e=>{if(!drag)return;win.style.left=(drag.left+e.clientX-drag.x+win.offsetWidth/2)+'px';win.style.top=(drag.top+e.clientY-drag.y+win.offsetHeight/2)+'px';win.style.transform='translate(-50%,-50%)'});
+ bar.addEventListener('pointerup',()=>drag=null);
+ if(name==='browser'){
+   const input=win.querySelector('#urlInput'), view=win.querySelector('#browserView');
+   const go=()=>{let u=input.value.trim();if(!u)return;if(!/^https?:\/\//i.test(u))u='https://'+u;input.value=u;view.innerHTML=`<h3>Pronto para navegar</h3><p>Se o site não aparecer incorporado, abra-o em uma nova aba.</p><button id="openExternal">Abrir site em outra aba ↗</button>`;view.querySelector('#openExternal').onclick=()=>window.open(u,'_blank','noopener')};
+   win.querySelector('#goBtn').onclick=go;input.addEventListener('keydown',e=>{if(e.key==='Enter')go()});
+   win.querySelector('#searchBtn').onclick=()=>{input.value='https://www.google.com/search?q=';window.open('https://www.google.com','_blank','noopener')};
+ }
+ if(name==='notes'){
+   let ta=win.querySelector('#noteText');try{ta.value=localStorage.getItem('virtualpc-note')||''}catch(e){}
+   win.querySelector('#saveNote').onclick=()=>{try{localStorage.setItem('virtualpc-note',ta.value);notify('Nota salva!')}catch(e){notify('Não foi possível salvar neste navegador')}};
+   win.querySelector('#clearNote').onclick=()=>{ta.value='';try{localStorage.removeItem('virtualpc-note')}catch(e){}};
+ }
+ if(name==='calc'){
+   let display=win.querySelector('#calcDisplay'), expr='';
+   win.querySelectorAll('[data-key]').forEach(b=>b.onclick=()=>{let k=b.dataset.key;if(k==='C'){expr='';display.textContent='0';return}if(k==='⌫'){expr=expr.slice(0,-1);display.textContent=expr||'0';return}if(k==='='){try{let safe=expr.replace(/×/g,'*').replace(/÷/g,'/').replace(/−/g,'-');if(!/^[0-9+\-*/%.() ]+$/.test(safe))throw Error();let result=Function('"use strict";return ('+safe+')')();if(!Number.isFinite(result))throw Error();expr=String(result);display.textContent=expr}catch(e){display.textContent='Erro';expr=''}return}if(k==='±'){if(expr.startsWith('-'))expr=expr.slice(1);else expr='-'+expr;display.textContent=expr||'0';return}expr+=k;display.textContent=expr});
+ }
+ if(name==='games'){
+   const area=win.querySelector('#gameArea');
+   win.querySelector('#clickGame').onclick=()=>{clearInterval(gameTimer);gameScore=0;let seconds=10;area.innerHTML=`<p>Clique no botão o máximo que conseguir em 10 segundos!</p><h3>Pontos: <span id="score">0</span> | Tempo: <span id="secs">10</span></h3><button id="tap">CLIQUE AQUI!</button>`;win.querySelector('#tap').onclick=()=>{if(seconds>0)win.querySelector('#score').textContent=++gameScore};gameTimer=setInterval(()=>{seconds--;let s=win.querySelector('#secs');if(s)s.textContent=seconds;if(seconds<=0){clearInterval(gameTimer);area.insertAdjacentHTML('beforeend',`<p>Fim! Você fez ${gameScore} pontos. Tente bater seu recorde!</p>`) }},1000)};
+   win.querySelector('#guessGame').onclick=()=>{clearInterval(gameTimer);let secret=Math.floor(Math.random()*20)+1;area.innerHTML=`<p>Escolhi um número de 1 a 20. Tente adivinhar!</p><input id="guess" type="number" min="1" max="20" placeholder="Seu palpite"><button id="guessBtn">Chutar</button><p id="guessResult"></p>`;win.querySelector('#guessBtn').onclick=()=>{let n=Number(win.querySelector('#guess').value),r=win.querySelector('#guessResult');if(n===secret)r.textContent='ACERTOU! 🏆 Novo número gerado.';else r.textContent=n<secret?'É maior! ⬆️':'É menor! ⬇️';if(n===secret)secret=Math.floor(Math.random()*20)+1}};
+ }
+ if(name==='settings'){
+   win.querySelector('#accent').oninput=e=>document.documentElement.style.setProperty('--accent',e.target.value);
+   win.querySelector('#wallpaper').onchange=e=>document.body.style.background=e.target.checked?'radial-gradient(ellipse at 70% 60%,#25445c,#071522 80%)':'radial-gradient(ellipse at 75% 65%,#14c4d4 0,#0788bb 38%,#07508d 76%,#092d5c 100%)';
+   win.querySelector('#aboutBtn').onclick=()=>win.querySelector('#aboutText').textContent='Meu PC Virtual • versão 2.0 • feito em HTML, CSS e JavaScript.';
  }
 }
-function closeApp(){document.getElementById('win').style.display='none'}
-function go(){
- let u=document.getElementById('url').value.trim();
- if(!/^https?:\/\//i.test(u))u='https://'+u;
- try{if(new URL(u).protocol!=='https:'&&new URL(u).protocol!=='http:')throw 0;window.open(u,'_blank','noopener');}
- catch(e){document.getElementById('msg').textContent='Endereço inválido.'}
-}
-function saveNote(){
- try{localStorage.setItem('pcvirtual-notes',document.getElementById('notes').value);document.getElementById('saved').textContent='Notas salvas!'}
- catch(e){document.getElementById('saved').textContent='Não foi possível salvar neste navegador.'}
-}
-function calculate(){
- const s=document.getElementById('calc').value.trim();
- if(!/^[\d+\-*/().%\s]+$/.test(s)){document.getElementById('result').textContent='Digite apenas uma conta matemática.';return}
- try{
- const r=Function('"use strict";return ('+s+')')();
- document.getElementById('result').textContent=Number.isFinite(r)?'Resultado: '+r:'Conta inválida';
- }catch(e){document.getElementById('result').textContent='Conta inválida'}
-}
-function play(n){
- const options=['Pedra','Papel','Tesoura'];
- const b=Math.floor(Math.random()*3);
- const result=n===b?'Empate!':(n-b+3)%3===1?'Você ganhou!':'Você perdeu!';
- document.getElementById('game').textContent='Você: '+options[n]+' | PC: '+options[b]+' — '+result;
-}
-function tick(){
- const d=new Date();
- document.getElementById('clock').innerHTML=d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})+'<br>'+d.toLocaleDateString('pt-BR');
-}
-tick();setInterval(tick,1000);
+document.querySelectorAll('[data-app]').forEach(el=>el.addEventListener('click',()=>openApp(el.dataset.app)));
+document.querySelectorAll('[data-open]').forEach(el=>el.addEventListener('click',()=>openApp(el.dataset.open)));
+document.getElementById('startBtn').onclick=()=>menu.classList.toggle('show');
+document.addEventListener('click',e=>{if(!e.target.closest('#startMenu')&&!e.target.closest('#startBtn'))menu.classList.remove('show')});
+function updateClock(){const d=new Date();document.getElementById('time').textContent=d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});document.getElementById('date').textContent=d.toLocaleDateString('pt-BR')}
+updateClock();setInterval(updateClock,10000);
 </script>
 </body>
-</html>
+  </html>
