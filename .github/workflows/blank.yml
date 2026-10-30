@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Virtual PC</title>
+<style>
+:root{--glass:rgba(18,24,40,.82);--line:rgba(255,255,255,.17);--text:#f6f7fb}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;color:var(--text);height:100vh;overflow:hidden;background:#111827}
+.desktop{height:100vh;position:relative;background:radial-gradient(ellipse at 75% 20%,#5b5bd6 0,transparent 36%),radial-gradient(ellipse at 25% 80%,#0ea5a4 0,transparent 34%),linear-gradient(135deg,#10152e,#172554 55%,#111827);background-size:cover}
+.desktop:before{content:"";position:absolute;inset:0;background:linear-gradient(125deg,transparent 40%,rgba(255,255,255,.07) 40.2%,transparent 60%);pointer-events:none}
+.brand{position:absolute;top:28px;right:34px;text-align:right;text-shadow:0 2px 16px #0005}
+.brand h1{font-size:clamp(26px,4vw,48px);margin:0;letter-spacing:-2px}.brand p{margin:7px 0;color:#dbeafe}
+.icons{position:absolute;top:22px;left:18px;display:grid;gap:18px}
+.desktop-icon{width:82px;border:0;background:transparent;color:white;display:flex;flex-direction:column;align-items:center;gap:7px;padding:7px 3px;border-radius:9px;cursor:pointer;text-shadow:0 1px 5px #000}
+.desktop-icon:hover{background:#ffffff20}.emoji{font-size:33px;filter:drop-shadow(0 3px 4px #0004)}
+.taskbar{position:absolute;bottom:0;left:0;right:0;height:60px;display:flex;align-items:center;justify-content:center;gap:9px;padding:8px 14px;background:rgba(12,17,31,.68);border-top:1px solid #ffffff25;backdrop-filter:blur(22px);z-index:20}
+.start-btn,.task-btn{height:42px;min-width:44px;border:1px solid transparent;border-radius:12px;background:#ffffff12;color:white;font-size:20px;cursor:pointer}
+.start-btn:hover,.task-btn:hover{background:#ffffff27}.task-btn.active{background:#ffffff30}
+.task-center{display:flex;gap:7px;align-items:center}.clock{position:absolute;right:18px;text-align:right;font-size:12px;line-height:1.5}
+.window{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);width:min(680px,calc(100vw - 24px));height:min(440px,calc(100vh - 100px));min-height:240px;background:rgba(21,27,43,.94);border:1px solid var(--line);border-radius:15px;box-shadow:0 25px 80px #0007;overflow:hidden;display:flex;flex-direction:column;z-index:5;backdrop-filter:blur(25px)}
+.window.hidden{display:none}.titlebar{height:46px;display:flex;align-items:center;justify-content:space-between;padding:0 12px 0 16px;background:#ffffff09;border-bottom:1px solid #ffffff13;cursor:move;flex-shrink:0}.window-title{display:flex;gap:9px;align-items:center;font-size:14px}.window-controls{display:flex;gap:6px}.window-controls button{width:29px;height:27px;border:0;border-radius:7px;background:#ffffff10;color:white;cursor:pointer}.window-controls .close:hover{background:#e5484d}
+.content{padding:18px;overflow:auto;flex:1}.muted{color:#aeb9d0}.hero-card,.panel{border:1px solid #ffffff16;background:#ffffff08;border-radius:13px;padding:16px;margin-bottom:13px}
+.hero-card h2{margin:0 0 7px;font-size:23px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:11px}.app-tile{padding:15px;border-radius:12px;background:#ffffff0b;border:1px solid #ffffff12;cursor:pointer;color:white;text-align:left}.app-tile:hover{background:#ffffff17}.app-tile b{display:block;margin:7px 0}.field{width:100%;background:#0c1222;color:white;border:1px solid #ffffff25;border-radius:9px;padding:11px;font:inherit}.primary{background:#6466e9;border:0;color:white;border-radius:9px;padding:10px 14px;cursor:pointer;margin-top:9px}.primary:hover{background:#7778f2}.start-menu{position:absolute;z-index:30;bottom:70px;left:50%;transform:translateX(-50%);width:min(380px,calc(100vw - 24px));padding:17px;border:1px solid var(--line);border-radius:18px;background:rgba(19,25,42,.95);box-shadow:0 18px 55px #0007;backdrop-filter:blur(25px)}.start-menu.hidden{display:none}.start-menu h3{margin:4px 0 13px}.start-apps{display:grid;grid-template-columns:1fr 1fr;gap:8px}.start-apps button{background:#ffffff0c;border:1px solid #ffffff12;color:white;border-radius:10px;padding:12px;text-align:left;cursor:pointer}.start-apps button:hover{background:#ffffff20}.browser-bar{display:flex;gap:8px;margin-bottom:12px}.browser-bar input{flex:1;min-width:0}.note{min-height:190px;resize:vertical}.footer-note{font-size:12px;color:#9ba8c2;margin-top:12px}
+@media(max-width:520px){.brand{top:24px;right:17px}.brand p{font-size:12px}.icons{top:15px;left:7px;gap:10px}.desktop-icon{width:68px;font-size:12px}.emoji{font-size:28px}.clock{right:8px;font-size:10px}.taskbar{justify-content:flex-start;padding-left:12px}.task-center{margin-left:0}.window{top:44%}}
+</style>
+</head>
+<body>
+<div class="desktop" id="desktop">
+  <div class="icons">
+    <button class="desktop-icon" onclick="openApp('computer')"><span class="emoji">🖥️</span><span>Meu PC</span></button>
+    <button class="desktop-icon" onclick="openApp('browser')"><span class="emoji">🌐</span><span>Navegador</span></button>
+    <button class="desktop-icon" onclick="openApp('notes')"><span class="emoji">📝</span><span>Bloco de notas</span></button>
+    <button class="desktop-icon" onclick="openApp('about')"><span class="emoji">⚙️</span><span>Configurações</span></button>
+  </div>
+  <div class="brand"><h1>Virtual PC</h1><p>Seu computador. Seu espaço.</p></div>
+
+  <section class="window hidden" id="window">
+    <div class="titlebar" id="titlebar"><div class="window-title"><span id="winIcon">🖥️</span><span id="winTitle">Meu PC</span></div><div class="window-controls"><button onclick="minimizeWindow()" title="Minimizar">—</button><button onclick="maximizeWindow()" title="Maximizar">□</button><button class="close" onclick="closeWindow()" title="Fechar">×</button></div></div>
+    <div class="content" id="content"></div>
+  </section>
+
+  <div class="start-menu hidden" id="startMenu">
+    <h3>☀️ Olá! Bem-vindo.</h3>
+    <p class="muted">O que vamos abrir hoje?</p>
+    <div class="start-apps">
+      <button onclick="openApp('computer')">🖥️ Meu PC</button>
+      <button onclick="openApp('browser')">🌐 Navegador</button>
+      <button onclick="openApp('notes')">📝 Bloco de notas</button>
+      <button onclick="openApp('about')">⚙️ Configurações</button>
+    </div>
+  </div>
+
+  <div class="taskbar">
+    <button class="start-btn" onclick="toggleStart()" title="Iniciar">⊞</button>
+    <div class="task-center">
+      <button class="task-btn" onclick="openApp('computer')" title="Meu PC">🖥️</button>
+      <button class="task-btn" onclick="openApp('browser')" title="Navegador">🌐</button>
+      <button class="task-btn" onclick="openApp('notes')" title="Notas">📝</button>
+    </div>
+    <div class="clock"><div id="time">00:00</div><div id="date">00/00/0000</div></div>
+  </div>
+</div>
+<script>
+const win=document.getElementById('window'), content=document.getElementById('content');
+const menu=document.getElementById('startMenu');
+let currentApp='', maximized=false, previousBounds=null;
+function toggleStart(){menu.classList.toggle('hidden')}
+function closeWindow(){win.classList.add('hidden');currentApp='';}
+function minimizeWindow(){win.classList.add('hidden')}
+function maximizeWindow(){
+  if(!maximized){previousBounds={left:win.style.left,top:win.style.top,width:win.style.width,height:win.style.height,transform:win.style.transform};Object.assign(win.style,{left:'10px',top:'10px',width:'calc(100% - 20px)',height:'calc(100% - 80px)',transform:'none'});maximized=true}
+  else{Object.assign(win.style,previousBounds||{});maximized=false}
+}
+function openApp(app){
+  currentApp=app;menu.classList.add('hidden');win.classList.remove('hidden');
+  if(maximized)maximizeWindow();
+  const data={
+    computer:['🖥️','Meu PC',`<div class="hero-card"><h2>Este é o seu PC virtual</h2><p class="muted">Uma experiência de desktop que funciona direto no navegador.</p></div><div class="grid"><div class="panel"><span class="emoji">💾</span><p>Armazenamento</p><b>Simulado</b><p class="muted">Não acessa os arquivos reais do dispositivo.</p></div><div class="panel"><span class="emoji">🧠</span><p>Memória</p><b>Interface web</b><p class="muted">Não é um sistema operacional real.</p></div><div class="panel"><span class="emoji">⚡</span><p>Status</p><b>Online no navegador</b><p class="muted">Pronto para usar.</p></div></div>`],
+    browser:['🌐','Navegador',`<div class="hero-card"><h2>Explorar a internet</h2><p class="muted">Digite um endereço para abrir em outra aba.</p><div class="browser-bar"><input class="field" id="url" placeholder="https://example.com" value="https://www.google.com"><button class="primary" onclick="goUrl()">Abrir</button></div></div><p class="footer-note">Por segurança, os sites abrem em uma nova aba do navegador real.</p>`],
+    notes:['📝','Bloco de notas',`<div class="hero-card"><h2>Bloco de notas</h2><p class="muted">Escreva suas ideias aqui. O texto fica nesta sessão do navegador.</p><textarea id="noteText" class="field note" placeholder="Comece a escrever..."></textarea><button class="primary" onclick="downloadNote()">Baixar arquivo .txt</button></div>`],
+    about:['⚙️','Configurações',`<div class="hero-card"><h2>Personalização</h2><p class="muted">Mude o visual do seu desktop.</p><label for="wallpaper">Tema de fundo</label><select class="field" id="wallpaper" style="margin-top:8px" onchange="setWallpaper(this.value)"><option value="blue">Azul espacial</option><option value="purple">Roxo galáctico</option><option value="sunset">Pôr do sol</option><option value="green">Verde neon</option></select><p class="footer-note">Este protótipo não altera configurações reais do aparelho.</p></div><div class="panel"><b>Virtual PC v1.0</b><p class="muted">Feito com HTML, CSS e JavaScript.</p></div>`]
+  };
+  const [icon,title,html]=data[app]||data.computer;
+  document.getElementById('winIcon').textContent=icon;document.getElementById('winTitle').textContent=title;content.innerHTML=html;
+}
+function goUrl(){let v=document.getElementById('url').value.trim();if(!v)return;if(!/^https?:\/\//i.test(v))v='https://'+v;try{const u=new URL(v);if(u.protocol==='http:'||u.protocol==='https:')window.open(u.href,'_blank','noopener,noreferrer')}catch(e){alert('Digite um endereço válido.')}}
+function downloadNote(){const text=document.getElementById('noteText').value;const blob=new Blob([text],{type:'text/plain;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='minhas-notas.txt';a.click();URL.revokeObjectURL(a.href)}
+function setWallpaper(v){const d=document.getElementById('desktop');const themes={blue:'radial-gradient(ellipse at 75% 20%,#5b5bd6,transparent 36%),radial-gradient(ellipse at 25% 80%,#0ea5a4,transparent 34%),linear-gradient(135deg,#10152e,#172554 55%,#111827)',purple:'radial-gradient(ellipse at 75% 20%,#a855f7,transparent 40%),radial-gradient(ellipse at 20% 80%,#db2777,transparent 35%),linear-gradient(135deg,#190e32,#312e81)',sunset:'radial-gradient(ellipse at 75% 20%,#fb923c,transparent 40%),radial-gradient(ellipse at 20% 80%,#ec4899,transparent 35%),linear-gradient(135deg,#451a36,#7c2d12)',green:'radial-gradient(ellipse at 75% 20%,#22c55e,transparent 40%),radial-gradient(ellipse at 20% 80%,#06b6d4,transparent 35%),linear-gradient(135deg,#052e2b,#064e3b)'};d.style.background=themes[v]||themes.blue}
+function updateClock(){const now=new Date();document.getElementById('time').textContent=now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});document.getElementById('date').textContent=now.toLocaleDateString('pt-BR')}
+updateClock();setInterval(updateClock,1000);
+const bar=document.getElementById('titlebar');let dragging=false,dx=0,dy=0;
+bar.addEventListener('pointerdown',e=>{if(e.target.closest('button')||maximized)return;dragging=true;const r=win.getBoundingClientRect();dx=e.clientX-r.left;dy=e.clientY-r.top;bar.setPointerCapture(e.pointerId)});
+bar.addEventListener('pointermove',e=>{if(!dragging)return;win.style.left=Math.max(0,Math.min(innerWidth-win.offsetWidth,e.clientX-dx))+'px';win.style.top=Math.max(0,Math.min(innerHeight-win.offsetHeight-60,e.clientY-dy))+'px';win.style.transform='none'});
+bar.addEventListener('pointerup',()=>dragging=false);bar.addEventListener('pointercancel',()=>dragging=false);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){menu.classList.add('hidden');closeWindow()}});
+</script>
+</body>
+</html>
