@@ -1,0 +1,106 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PC Virtual</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#0879b9;color:white;height:100vh;overflow:hidden}
+.desktop{height:100dvh;padding:20px;background:linear-gradient(135deg,#063c80,#079bc9 60%,#102c68)}
+.icons{display:grid;grid-template-columns:75px 75px;gap:25px 15px}
+.app{width:75px;text-align:center;cursor:pointer;padding:8px 2px;border:1px solid transparent;border-radius:5px;font-size:12px}
+.app:hover{background:#ffffff30;border-color:#ffffff40}
+.emoji{font-size:35px;display:block;margin-bottom:7px}
+.taskbar{position:absolute;bottom:0;left:0;width:100%;height:55px;background:#101a2bd9;display:flex;align-items:center;justify-content:center;gap:16px;backdrop-filter:blur(12px)}
+.taskbar button{font-size:23px;background:none;border:0;color:white;cursor:pointer}
+.clock{position:absolute;right:12px;font-size:12px;text-align:right}
+.window{display:none;position:absolute;top:12%;left:5%;width:90%;height:70%;max-width:700px;background:#f4f6fa;color:#222;border-radius:9px;overflow:hidden;box-shadow:0 10px 50px #0007}
+.titlebar{height:42px;background:#172c4b;color:white;display:flex;align-items:center;justify-content:space-between;padding:0 12px}
+.titlebar button{background:#d33;color:white;border:0;padding:7px 12px;border-radius:4px}
+.content{padding:15px;height:calc(100% - 42px);overflow:auto}
+.content button{padding:10px;border:0;border-radius:5px;background:#1769aa;color:white;margin:4px;cursor:pointer}
+input{padding:10px;max-width:100%;width:100%;margin:8px 0}
+#notes{width:100%;height:65%;padding:10px}
+</style>
+</head>
+<body>
+<div class="desktop">
+  <div class="icons">
+    <div class="app" onclick="openApp('Meu PC')"><span class="emoji">🖥️</span>Meu PC</div>
+    <div class="app" onclick="openApp('Navegador')"><span class="emoji">🌐</span>Navegador</div>
+    <div class="app" onclick="openApp('Bloco de Notas')"><span class="emoji">📝</span>Notas</div>
+    <div class="app" onclick="openApp('Calculadora')"><span class="emoji">🧮</span>Calculadora</div>
+    <div class="app" onclick="openApp('Jogos')"><span class="emoji">🎮</span>Jogos</div>
+    <div class="app" onclick="openApp('Configurações')"><span class="emoji">⚙️</span>Configurações</div>
+  </div>
+</div>
+
+<div class="taskbar">
+  <button onclick="openApp('Iniciar')">⊞</button>
+  <button onclick="openApp('Navegador')">🌐</button>
+  <button onclick="openApp('Meu PC')">🖥️</button>
+  <div class="clock" id="clock"></div>
+</div>
+
+<div class="window" id="win">
+  <div class="titlebar"><span id="title">Aplicativo</span><button onclick="closeApp()">✕</button></div>
+  <div class="content" id="content"></div>
+</div>
+
+<script>
+function openApp(name){
+ const win=document.getElementById('win');
+ const c=document.getElementById('content');
+ document.getElementById('title').textContent=name;
+ win.style.display='block';
+ if(name==='Meu PC'){
+ c.innerHTML='<h2>🖥️ Meu PC</h2><p>PC Virtual Web</p><p>Memória real e arquivos do dispositivo não são simulados.</p><button onclick="openApp(\'Bloco de Notas\')">Abrir Notas</button>';
+ }else if(name==='Navegador'){
+ c.innerHTML='<h2>🌐 Navegador</h2><p>Digite um endereço para abrir em outra aba:</p><input id="url" placeholder="https://example.com"><button onclick="go()">Abrir site</button><p id="msg">Alguns sites bloqueiam a abertura dentro de outras páginas.</p>';
+ }else if(name==='Bloco de Notas'){
+ c.innerHTML='<h2>📝 Bloco de Notas</h2><textarea id="notes" placeholder="Escreva aqui..."></textarea><button onclick="saveNote()">Salvar neste navegador</button><p id="saved"></p>';
+ }else if(name==='Calculadora'){
+ c.innerHTML='<h2>🧮 Calculadora</h2><input id="calc" placeholder="Ex.: (12+8)*3"><button onclick="calculate()">Calcular</button><p id="result"></p>';
+ }else if(name==='Jogos'){
+ c.innerHTML='<h2>🎮 Jogos</h2><p>Pedra, papel ou tesoura!</p><button onclick="play(0)">Pedra</button><button onclick="play(1)">Papel</button><button onclick="play(2)">Tesoura</button><p id="game"></p>';
+ }else if(name==='Configurações'){
+ c.innerHTML='<h2>⚙️ Configurações</h2><button onclick="document.body.style.background=\'#161b22\'">Tema escuro</button><button onclick="document.body.style.background=\'#0879b9\'">Tema azul</button><p>Personalize o visual do PC virtual.</p>';
+ }else{
+ c.innerHTML='<h2>⊞ Menu Iniciar</h2><p>Bem-vindo ao PC Virtual!</p>'+['Meu PC','Navegador','Bloco de Notas','Calculadora','Jogos','Configurações'].map(x=>'<button onclick="openApp('+JSON.stringify(x)+')">'+x+'</button>').join('');
+ }
+}
+function closeApp(){document.getElementById('win').style.display='none'}
+function go(){
+ let u=document.getElementById('url').value.trim();
+ if(!/^https?:\/\//i.test(u))u='https://'+u;
+ try{if(new URL(u).protocol!=='https:'&&new URL(u).protocol!=='http:')throw 0;window.open(u,'_blank','noopener');}
+ catch(e){document.getElementById('msg').textContent='Endereço inválido.'}
+}
+function saveNote(){
+ try{localStorage.setItem('pcvirtual-notes',document.getElementById('notes').value);document.getElementById('saved').textContent='Notas salvas!'}
+ catch(e){document.getElementById('saved').textContent='Não foi possível salvar neste navegador.'}
+}
+function calculate(){
+ const s=document.getElementById('calc').value.trim();
+ if(!/^[\d+\-*/().%\s]+$/.test(s)){document.getElementById('result').textContent='Digite apenas uma conta matemática.';return}
+ try{
+ const r=Function('"use strict";return ('+s+')')();
+ document.getElementById('result').textContent=Number.isFinite(r)?'Resultado: '+r:'Conta inválida';
+ }catch(e){document.getElementById('result').textContent='Conta inválida'}
+}
+function play(n){
+ const options=['Pedra','Papel','Tesoura'];
+ const b=Math.floor(Math.random()*3);
+ const result=n===b?'Empate!':(n-b+3)%3===1?'Você ganhou!':'Você perdeu!';
+ document.getElementById('game').textContent='Você: '+options[n]+' | PC: '+options[b]+' — '+result;
+}
+function tick(){
+ const d=new Date();
+ document.getElementById('clock').innerHTML=d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})+'<br>'+d.toLocaleDateString('pt-BR');
+}
+tick();setInterval(tick,1000);
+</script>
+</body>
+</html>
